@@ -16,8 +16,8 @@ void loop(){
 //sprain detection function
   int icount=1;
   int kcount=100;
-  int jcount=0;
-  int lcount=0;
+  int jcount;
+  int lcount;
   float firstLinear_z=0;
   float res = 0;
   float magnitude=0;
@@ -30,11 +30,12 @@ void loop(){
   mtx_type Xfhat[N];
   mtx_type Xf[N];
   mtx_type oldRmatrix[N][N]={1,0,0,0,1,0,0,0,1};
+  mtx_type Rmatrix[N][N]{0,0,0,0,0,0,0,0,0};
 
 
 
 void sprainDetect(){
-  /*
+
   sensors_event_t angVelocityData, linearAccelData;
   bno.getEvent(&angVelocityData, Adafruit_BNO055::VECTOR_GYROSCOPE);
   bno.getEvent(&linearAccelData, Adafruit_BNO055::VECTOR_LINEARACCEL);
@@ -46,14 +47,15 @@ void sprainDetect(){
   float Linear_x= linearAccelData.acceleration.x;
   float Linear_y= linearAccelData.acceleration.y;
   float Linear_z= linearAccelData.acceleration.z;
-  */
-
+  
+/*
   float Gyro_x=1.5;
   float Gyro_y=1.2;
   float Gyro_z=-2.3;
   float Linear_x=3;
   float Linear_y=5;
   float Linear_z=9;
+  */
   
    //vertical axis
   if (icount<kcount && icount>1){
@@ -133,7 +135,6 @@ void sprainDetect(){
         mtx_type C[N][N];
         mtx_type D[N][N];
         mtx_type Rmatrixhat[N][N]{0,0,0,0,0,0,0,0,0};
-        mtx_type Rmatrix[N][N]{0,0,0,0,0,0,0,0,0};
         mtx_type eye[N][N]={1,0,0,0,1,0,0,0,1};
         mtx_type AA[N][N]={0,0,0,0,0,0,0,0,0};
         float sigma= sqrt(Gyro_x*Gyro_x+Gyro_y*Gyro_y+Gyro_z*Gyro_z);
@@ -185,10 +186,10 @@ float IsSwing=0; // 지울거임
 //누적오류보정
     if (icount>1){
       if ((IsSwing-oldswing)==1){
-        oldRmatrix=eye;
+        Matrix.Copy((mtx_type*)eye, N, N, (mtx_type*)oldRmatrix);
       }
       else{
-        oldRmatrix=Rmatrix;
+        Matrix.Copy((mtx_type*)Rmatrix, N, N, (mtx_type*)oldRmatrix);
       }
       oldswing=IsSwing;
     }
