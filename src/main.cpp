@@ -1,4 +1,3 @@
-#include <Vector.h>
 #include <MatrixMath.h>
 #include <math.h>
 #define N 3
